@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kaggle MCP Notebook Scout"
+  short_description: "Rank notebooks by votes+recency"
+  default_prompt: "Use $kaggle-mcp-notebook-scout to fetch and rank public Kaggle notebooks for a competition by upvotes (primary) and recency (secondary)."
