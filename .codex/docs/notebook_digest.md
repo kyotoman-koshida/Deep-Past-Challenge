@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-02-28 | 0 | 0 | 公開ノートで頻出の MBR（Minimum Bayes Risk）デコードを「モデルを変えずに」取り込む方針を採用。`mattiaangeli/deep-pasta-mbr` の実装（候補プール + BLEU系での rerank）を参考に、ローカル提出ノート `notebooks/003/deep-09-mbr-v1.ipynb` に decoding-only で反映（アイデアは1つに限定）。`sacrebleu` がある場合は sentence BLEU、無い場合は文字n-gram F1 で MBR スコア計算にフォールバック。 |
 | 2026-02-27 | 0 | 0 | 「主に使われているモデル」観点で上位ノートを追加確認（`get_notebook_info` でソースを確認）。ByT5 系が主流で、mBART50/LLM 後処理/LLM LoRA も一部。 |
 | 2026-02-26 | 2 | 0 | Kaggle MCP が未認証/authorize エラーのため、Kaggleページのアーカイブから要約 |
 | 2026-02-26 | 0 | 0 | Kaggle MCP で `search_notebooks` を試したが `Unauthenticated`（=公開ノートの一覧取得ができず）。アダプタ側の `Authorization: Bearer:` バグで失敗している可能性が高い（`public_insights.md` 参照） |
@@ -65,6 +66,7 @@
 （複数ノートに共通するテーマ: リーク指摘・評価指標の実装・よく使われる特徴量など）
 
 - 主流モデルは **ByT5（`AutoModelForSeq2SeqLM`）の finetune / 推論最適化 / アンサンブル**。例: `takamichitoda/dpc-starter-train`, `qifeihhh666/dpc-starter-infer-add-sentencealign`, `anthonytherrien/byt-ensemble-script`（いずれも ByT5 系モデルをロードして推論）。
+- 推論側の代表的なスコア押し上げアイデアとして **MBR（Minimum Bayes Risk）デコード**が見られる（候補を複数生成し、候補同士の類似度（BLEU/chrF など）で rerank）。例: `mattiaangeli/deep-pasta-mbr`, `mattiaangeli/deep-pasta-mbr-v2`。
 - よく参照される ByT5 チェックポイント（fine-tune 済み配布物）の例:
   - `"/kaggle/input/byt5-akkadian-model"`（Starter 系の出力として頻出）
   - `"/kaggle/input/final-byt5/byt5-akkadian-optimized-34x"`（`assiaben/final-byt5`。推論最適化ノートで頻出）
