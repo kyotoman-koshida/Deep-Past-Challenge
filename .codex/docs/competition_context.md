@@ -14,6 +14,13 @@
 - **賞金**: 総額 $50,000（上位6位まで: 15k/10k/8k/7k/5k/5k）
 - **目的**: 旧アッシリア語（アッカド語の方言）の**転写（transliteration）→英訳**の機械翻訳モデルを作る（`train.csv` は 1,561 ペア。追加で公開テキスト/辞書/OCR資源が同梱）
 
+### 公式説明の「難しさ」の解釈（低資源 + 形態論が複雑）
+
+Kaggle概要の “Akkadian is a low-resource, morphologically complex language where a single word can encode what takes multiple words in English.” は、主に次の難点を指す。
+
+- **低資源（low-resource）**: 教師データが少なく、単語形（活用形）の種類に対して観測回数が足りない → 長尾の語形が多く、汎化が難しい。
+- **形態論が複雑（morphologically complex）**: 1語に「語幹 + 複数の文法情報（人称/数/性/格/時制/法/接辞代名詞など）」が乗りやすく、英語では複数語（主語・助動詞・目的語・前置詞など）で表す内容が、入力側では1トークン相当に圧縮され得る → アライメントや分割（tokenization）が難しくなる。
+
 ## 評価指標（要点）
 
 - **スコア**: `sqrt(BLEU * chrF++)`（BLEU と chrF++ の**幾何平均**）
