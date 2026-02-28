@@ -20,7 +20,13 @@
 - `.codex/docs/competition_context.md`  
   コンペ仕様（評価指標/提出形式/制約/データ注意点）の要約。**仕様に関わる前提**が変わったらここを先に直す。
 - `.codex/docs/dataset_instructions.md`  
-  データセットの「表記ゆれ/編集注記/欠損（gap）/限定詞（determinatives）/文字種（Unicode）」の整理と、前処理の提案（削除・置換ルール、`Ḫ/ḫ`→`H/h` の統一など）。**前処理やtokenizationの判断**はまずここを参照する。
+  Kaggle Overview タブの “Dataset Instructions” の原文（手動コピー＆ペーストした内容）を Markdown 体裁で配置したもの。**前処理やtokenizationの判断**はまずここを参照する。
+- `.codex/docs/kaggle_original_index.md`  
+  Kaggle の Overview/Data タブ原文の参照先まとめ（原文 Markdown の入口）。
+- `.codex/docs/kaggle_overview_original.md`  
+  Kaggle Overview タブの原文（Dataset Instructions を除く）。
+- `.codex/docs/kaggle_data_original.md`  
+  Kaggle Data タブの原文。
 - `.codex/docs/notebook_digest.md`  
   公開Notebook/ディスカッションの要点（何が効くか、再現のコツ、落とし穴、引用元のメモ）。  
   “読むだけ” で終わらせず、**次の実験に落とす仮説**まで書く。
