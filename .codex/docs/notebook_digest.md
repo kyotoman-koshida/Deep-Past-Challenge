@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-02-27 | 0 | 0 | 「主に使われているモデル」観点で上位ノートを追加確認（`get_notebook_info` でソースを確認）。ByT5 系が主流で、mBART50/LLM 後処理/LLM LoRA も一部。 |
 | 2026-02-26 | 2 | 0 | Kaggle MCP が未認証/authorize エラーのため、Kaggleページのアーカイブから要約 |
 | 2026-02-26 | 0 | 0 | Kaggle MCP で `search_notebooks` を試したが `Unauthenticated`（=公開ノートの一覧取得ができず）。アダプタ側の `Authorization: Bearer:` バグで失敗している可能性が高い（`public_insights.md` 参照） |
 | 2026-02-26 | 20 | 0 | Kaggle MCP で `search_notebooks` / `get_notebook_info` が成功。upvote（主）+新しさ（従）で重要ノートをランキングして追記（後述）。 |
@@ -16,6 +17,7 @@
 |----------|-----|------|------------|------|------------|---------------------------|------------|
 | DPC Starter (Train) | https://archive.ph/Dx7ZF | takamichitoda | （要確認） | （要確認） | ByT5 finetune + augmentation | アライン済み追加データの利用、`akk→en` と `en→akk` の双方向データ拡張（`direction` 付き） | まずはこの骨格を自前コードに写経し、前処理とCVだけ差し替える |
 | DPC Baseline: train+infer | https://archive.ph/5myze | llkh0a | （要確認） | （要確認） | Starter を踏襲した train+infer | 学習〜推論〜submission 出力までの一連の流れを把握できる | 手元の提出Notebook雛形として利用 |
+| Akkadian language modeling (continued pre-training) | notebooks/001/akkadian-language-modeling-continued-pre-training.ipynb | （不明） | （不明） | 2025-12-18 | T5-base 追加事前学習（ドメイン適応） | `published_texts.csv` の転写（最大8000件）で self-supervised 学習。determinatives（`{d}` 等）や `<gap>` を special token として追加し、マスク対象から除外 | 「T5のspan corruption」をうたうが、実装は sentinels を使う本来の denoising ではなく “ランダムtokenマスク＋その位置だけ損失” に近い。cleaning 関数がノート内に無い点も注意 |
 
 ### 重要ノートブック（Kaggle MCP: upvote 主 + 新しさ 従 / 2026-02-26）
 
@@ -62,4 +64,12 @@
 
 （複数ノートに共通するテーマ: リーク指摘・評価指標の実装・よく使われる特徴量など）
 
-- 
+- 主流モデルは **ByT5（`AutoModelForSeq2SeqLM`）の finetune / 推論最適化 / アンサンブル**。例: `takamichitoda/dpc-starter-train`, `qifeihhh666/dpc-starter-infer-add-sentencealign`, `anthonytherrien/byt-ensemble-script`（いずれも ByT5 系モデルをロードして推論）。
+- よく参照される ByT5 チェックポイント（fine-tune 済み配布物）の例:
+  - `"/kaggle/input/byt5-akkadian-model"`（Starter 系の出力として頻出）
+  - `"/kaggle/input/final-byt5/byt5-akkadian-optimized-34x"`（`assiaben/final-byt5`。推論最適化ノートで頻出）
+  - `"/kaggle/input/dpc-byt5-large/"`（`byt5-large` 系の例）
+  - `"/kaggle/input/models/mattiaangeli/byt5-akkadian-mbr-v2/pytorch/default/1"`（MBR 用の ByT5 派生）
+- 「LLM 後処理（polish）」は補助的に使われることがある。例: `hanifnoerrofiq/dpc-byt5-base-flan-t5-base` は **ByT5 翻訳 → Flan-T5(base) で英語整形**の2段。
+- 「LLM を主モデルにする」系の試みもあるが、主流とは別系統（計算資源/実装コストが増える）。例: `rejk11/deep-past-qwen-4b-lora`（Qwen 4B + LoRA）、`xiaoleilian/deep-past-sft-gemma3-training`（Gemma3 4B IT + SFT/LoRA）。
+- ByT5 以外の seq2seq も一部で検証される。例: `rifat963/offline-competition-deep-past-challenge-mbart50`（mBART50 + LoRA、オフライン実行前提）。
