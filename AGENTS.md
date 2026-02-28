@@ -7,6 +7,7 @@
 
 - **`.codex/docs` を一次情報の置き場所（Single Source of Truth）として扱う**  
   口頭の説明で終わらせず、必ず該当する Markdown に反映して「次回の自分/別エージェントが追える状態」にする。
+- **`.codex/docs/experiments_log.md` はユーザーが手動で更新する（Codex は参照のみ・書き込み禁止）**
 - **変更は最小・再現性は最大**  
   実験・前処理・評価は再実行できる粒度で記録する（後追いで “なぜ効いた/効かなかった” が説明できること）。
 - **新しい知見は “比較可能な形” に揃える**  
@@ -44,7 +45,7 @@
 - まず **「何が新規性か」** を抽出し、`.codex/docs/notebook_digest.md` に要点化する
 - Discussions/コメントは、本文やスレッド構造が散逸しやすいので、手動採集した一次情報はまず `.codex/docs/discussion_comments.md` に記録する
 - その後、**自分のパイプラインに入れるとしたらどこか**（前処理/モデル/学習/推論/後処理/評価）に紐付けて仮説を書く
-- すぐ試せる「精度改善のための施策」は `.codex/docs/experiments_log.md` に “次の実験候補” として起票する
+- すぐ試せる「精度改善のための施策」は `.codex/docs/notebook_digest.md` / `.codex/docs/public_insights.md` に “次の実験候補” としてメモし、`.codex/docs/experiments_log.md` への反映はユーザーが行う
 - MCP/認証/環境などの検証メモは `.codex/docs/ops_log.md` に残す（実験ログに混ぜない）
 
 ## 実験ログ（必須で残す情報）
