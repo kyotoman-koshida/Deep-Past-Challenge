@@ -41,6 +41,24 @@
 
 ただし、LB 上位（ByT5 系）文脈の公開物では、**ByT5（byte-level） vs サブワード分割の体系的比較（同条件 ablation）**は前面に出ていない印象で、実務的には前処理と推論最適化（生成長・ビーム・MBR 等）に議論が集中している。
 
+### 0.3 「このコンペで subword モデルを作る価値があるか」の暫定判断
+
+結論（暫定）: **“上振れ狙い” の価値はあるが、優先度は高くない**。まず ByT5 系で「生成長/正規化/CVリーク無し」を固めた上で、余力があれば試すのが安全。
+
+根拠（公開物からの推測）:
+- Discussions では **subword tokenization がハイフン等で難しくなる**ことが示唆され、LB 上位は **ByT5（UTF-8 byte）**に寄っているという観測もある（`.codex/docs/discussion_comments.md` 参照）。
+- 公開ノートでは mT5/T5/NLLB/mBART など subword 前提モデルの利用例や「custom BPE/SentencePiece」提案はあるが、**subword 化が ByT5 を明確に上回る**という公開ablationは目立たない。
+
+試す価値が上がる条件:
+- 入力側の表記（`<gap>`, `{d}`, `...`, ハイフン、Unicode/記号）を **正規化して subword が安定する**見込みがある。
+- 追加データ（アライン済みなど）で **データ量が増え、語彙学習が効きやすい**。
+- 目的が「LB 35.1 の ByT5 公開モデルを超える」で、ByT5 の改善が頭打ちになった。
+
+最小コストの検証案（ablation）:
+1) **モデルは既存 subword 系**（mT5/T5/NLLB/mBART）をそのまま使い、tokenizer も付属のまま（まずは “tokenizer学習” を後回し）。
+2) 同一 split / 同一前処理 / 同一 decode 設定で ByT5 と比較（生成長を必ず固定）。
+3) それでも有望なら、次に **SentencePiece を自前学習**（語彙サイズを小さめから）し、特殊記号は special token として固定して分割破綻を避ける。
+
 ### 0.1 よく出てくる “ByT5 のチェックポイント名/パス” 例（=実際にロードされているもの）
 
 公開ノートでは、Hugging Face の “素の ByT5” というより、**fine-tune 済み重みを Kaggle Dataset / Kaggle Model として配布**し、`from_pretrained("/kaggle/input/...")` で読むケースが多い。
