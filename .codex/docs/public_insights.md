@@ -76,6 +76,9 @@
 
 ノート由来の一般的な到達点は次の通り（本コンペ特有の制約を踏まえる）。
 
+- **ByT5 の生成長は「必ず明示」する**  
+  - `Seq2SeqTrainer(predict_with_generate=True)` の評価/推論が `generate` のデフォルトに依存すると、ByT5（byte-level）では出力が極端に短くなって BLEU/chrF がほぼ 0 → `geo_mean≈0` に落ちることがある。  
+  - 公開ノート（例: `notebooks/004/dpc-baseline-train-infer.ipynb`）では `generation_max_length=512`（または `max_new_tokens`）を明示している。
 - **ビーム探索 + 長さ正規化**（短文/欠損表現が混ざると極端に短い出力に寄りがち）。
 - **軽い後処理**（空白/句読点/記号の正規化、`<gap>` 的な表現を導入した場合の整形）。
 - **複数 seed / 複数 fold のアンサンブル**（LB 安定化と底上げ）。
@@ -90,6 +93,8 @@
 - **編集記号の扱い**を固定する（除去/タグ化/ギャップ置換）。  
   - 単純除去は入力情報を落とすリスクがあるため、まずは「置換タグ化（`<gap>`, `<big_gap>` など）」を比較対象に入れる。
 - **determinatives（`{d}` など）**は、全除去より「タグとして残す」方向が安全（固有名詞/地名の手掛かりになり得る）。
+- **CV の split はリークしない形を優先**  
+  - sentence alignment / 文分割で 1 doc から複数サンプルを作る場合、ランダム split すると同一 doc 由来サンプルが train/val に跨り、評価が過大になりやすい。`oare_id` 等で GroupKFold するのが無難（ただし LB との乖離が減るとは限らないので要検証）。
 
 ### Priority 2: 「方向」トークンを入れた multi-task を標準化
 

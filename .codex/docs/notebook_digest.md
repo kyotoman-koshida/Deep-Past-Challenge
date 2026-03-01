@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-01 | 0 | 0 | `notebooks/002/dpc-starter-train-cv5.ipynb` と `notebooks/004/dpc-baseline-train-infer.ipynb` を比較して、評価が極端に低い主因として **ByT5 での生成長の未指定（`generation_max_length` / `max_new_tokens`）** が濃厚だと判明。Baseline側は `generation_max_length=512` を明示しており `eval_geo_mean` が “数十” になり得る。一方CV5側はデフォルト生成長（短い）に依存し、BLEU/chrF がほぼ 0 になって `geo_mean≈0` に落ちる可能性が高い。加えて Baseline は expanded sentence をランダム split しており、同一ドキュメント由来サンプルが train/val に跨る **リーク**で評価が過大になり得る。 |
 | 2026-02-28 | 0 | 0 | 公開ノートで頻出の MBR（Minimum Bayes Risk）デコードを「モデルを変えずに」取り込む方針を採用。`mattiaangeli/deep-pasta-mbr` の実装（候補プール + BLEU系での rerank）を参考に、ローカル提出ノート `notebooks/003/deep-09-mbr-v1.ipynb` に decoding-only で反映（アイデアは1つに限定）。`sacrebleu` がある場合は sentence BLEU、無い場合は文字n-gram F1 で MBR スコア計算にフォールバック。 |
 | 2026-02-27 | 0 | 0 | 「主に使われているモデル」観点で上位ノートを追加確認（`get_notebook_info` でソースを確認）。ByT5 系が主流で、mBART50/LLM 後処理/LLM LoRA も一部。 |
 | 2026-02-26 | 2 | 0 | Kaggle MCP が未認証/authorize エラーのため、Kaggleページのアーカイブから要約 |
@@ -17,7 +18,7 @@
 | タイトル | URL | 作者 | アップ投票 | 日付 | 手法の一言 | 要点・使えそうなアイデア | 自分用メモ |
 |----------|-----|------|------------|------|------------|---------------------------|------------|
 | DPC Starter (Train) | https://archive.ph/Dx7ZF | takamichitoda | （要確認） | （要確認） | ByT5 finetune + augmentation | アライン済み追加データの利用、`akk→en` と `en→akk` の双方向データ拡張（`direction` 付き） | まずはこの骨格を自前コードに写経し、前処理とCVだけ差し替える |
-| DPC Baseline: train+infer | https://archive.ph/5myze | llkh0a | （要確認） | （要確認） | Starter を踏襲した train+infer | 学習〜推論〜submission 出力までの一連の流れを把握できる | 手元の提出Notebook雛形として利用 |
+| DPC Baseline: train+infer | https://archive.ph/5myze | llkh0a | （要確認） | （要確認） | Starter を踏襲した train+infer | `generation_max_length=512` を明示（ByT5 で重要）。train 側は `akk→en` に加え `en→akk` を混ぜる双方向データ（multi-task）で増量。 | `notebooks/004/dpc-baseline-train-infer.ipynb` は `byt5-base` + 既学習重み（`/kaggle/input/byt5-akkadian-model`）から再学習。expanded sentence をランダム split して val を作るため、同一 doc 由来の分割サンプルが train/val を跨るリークで評価が過大になり得る点に注意。 |
 | Akkadian language modeling (continued pre-training) | notebooks/001/akkadian-language-modeling-continued-pre-training.ipynb | （不明） | （不明） | 2025-12-18 | T5-base 追加事前学習（ドメイン適応） | `published_texts.csv` の転写（最大8000件）で self-supervised 学習。determinatives（`{d}` 等）や `<gap>` を special token として追加し、マスク対象から除外 | 「T5のspan corruption」をうたうが、実装は sentinels を使う本来の denoising ではなく “ランダムtokenマスク＋その位置だけ損失” に近い。cleaning 関数がノート内に無い点も注意 |
 
 ### 重要ノートブック（Kaggle MCP: upvote 主 + 新しさ 従 / 2026-02-26）
