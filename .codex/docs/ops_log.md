@@ -28,3 +28,13 @@
 ### Notebook naming conventions memo
 
 - Consolidated the `notebooks/<NNN>/` naming rules into `.codex/docs/notebook_naming_rules.md` so Codex and humans can reference the same convention.
+
+## 2026-03-02
+
+### Colab A100 (40GB) for faster CV training + batch size scaling notes
+
+- Target notebook: `notebooks/002/[3]dpc-starter-train-cv5-v4.ipynb` (ByT5-small, `MAX_LENGTH=512`, `fp16=False`, `per_device_*_batch_size=4`, `gradient_accumulation_steps=2`).
+- Rule of thumb: max batch size is usually **~linear with VRAM** for the same model/seq_len. A100 40GB vs P100 16GB gives ~2.5× headroom → batch `4 -> ~8–12` if keeping FP32.
+- Mixed precision on A100: switching to `bf16=True` (or `fp16=True`) typically halves activation memory, so the practical range often becomes `~16–24` (sometimes higher with gradient checkpointing), but generation-based eval (`predict_with_generate=True`, beams) can force a smaller `per_device_eval_batch_size`.
+- Safer approach: keep `per_device_eval_batch_size` smaller than train batch (e.g. train=16, eval=4–8) and empirically search the max executable batch on a short warmup run (1–5% of data) before running full CV.
+- Playbook (reusable): `.codex/docs/colab_porting_playbook.md`
