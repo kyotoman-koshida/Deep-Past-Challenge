@@ -1,6 +1,6 @@
 # Deep Past Challenge（Translate Akkadian to English）公開ノート/コメントからの学び（暫定）
 
-最終更新: 2026-02-28
+最終更新: 2026-03-03
 
 > 注意: 本来は Kaggle MCP で公開ノートブック/ディスカッション/コメントを収集したいが、この環境では Kaggle MCP が `Unauthenticated` になり、`authorize` もエラーで進められない。  
 > そのため本メモは、Kaggleページのアーカイブ（archive.ph 等）と外部の公開記事を一次ソースとして、現時点で再現性のある範囲だけを整理している。
@@ -154,6 +154,10 @@
 - `num_beams`, `length_penalty`, `max_new_tokens` をメトリクス（BLEU/chrF++）で最適化。
 - n-best を保存して、**chrF++ 寄りの rerank**（文字一致が効きやすい）を試す価値がある。
 - 公開ノートの実装例では、候補を「beam + sampling」でプールし、**候補同士の sentence-level BLEU（`sacrebleu`）で MBR rerank**する構成がある（例: `mattiaangeli/deep-pasta-mbr`）。モデルを固定したまま取り込める改善として、ローカル提出ノート `notebooks/003/deep-09-mbr-v1.ipynb` に decoding-only で反映（`sacrebleu` が無い場合は文字n-gram F1 にフォールバック）。
+
+### Priority 6: スロット置換（名詞入れ替え）によるデータ増量（慎重に）
+
+- 2026-03-03 メモ: **安全なスロット（固有名詞・地名・人名・数詞など）に限定し、かつアラインメント高信頼のものだけ**置換して増量するなら試す価値あり。一般名詞の広い入れ替えは（アッカド語側の形態/表記揺れ・英語側の文法/照応崩れで）ラベルノイズ化しやすいので避ける。
 
 ---
 
