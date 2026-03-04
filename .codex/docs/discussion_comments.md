@@ -210,6 +210,19 @@ Something seems to have gone wrong with the LB update. We are investigating.
 - 本文: transliteration:2- translation: 2+ or 2- translation of test is 2- or 2+ or 2(+gap) ??? please let me know.thank you
 
 ### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3416596
+- 投稿者: @llkh0a
+- 投稿日時: 2026-03-03
+- upvote: 1
+- 本文: question about (n broken lines), do the lines between "Nimar-Istar." and "When he returns from Mamma he will bring it to me" counts as n broken lines?
+
+If I understand correctly, the translation should be:
+
+I furthermore gave 1 mina of good, native copper for an allu’āru-container of sweet wine from Mamma to Puzur-Amurrum son of Nimar-Ištar. <gap> When he returns from Mamma he will bring it to me. (This was) apart from the 4 allu’āru-containers, the proceeds from the silver and washed copper that they have received (previously). Witnessed by Šu-Bēlum son of Kuzizia.
+
+
+
+### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3416050
 - 投稿者: @cengricardoperez
 - 投稿日時: 2026-03-02
