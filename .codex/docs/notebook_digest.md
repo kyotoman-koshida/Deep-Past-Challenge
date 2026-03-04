@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-04 | 0 | 0 | `notebooks/005/lb-28-1-dpc-byt5-large-inference.ipynb` を確認。ByT5-large 推論の**最小構成**で、`model.eval()` / `torch.no_grad()` 以外の省メモリ工夫（FP16/8bit 量子化、`device_map` 分割、dynamic padding、`use_cache` 制御など）は未導入。OOM 時は `BATCH_SIZE` / `num_beams` / 生成長（`max_new_tokens` 等）を下げる、FP16 を検討。 |
 | 2026-03-04 | 0 | 0 | `notebooks/002/[3]dpc-starter-train-cv5-v5-colab.ipynb` をコピーして `notebooks/002/[3]dpc-starter-train-cv5-v6-colab.ipynb` を作成。Entry: `678899` の推奨に合わせ、**translation 側の正規化（fem./sing./pl./plural/(?) 除去、`PN→<gap>`、小数→Unicode分数、month ローマ数字→整数など）**と、**transliteration 側の gap/決定詞（(d)->{d}, (ki)->{ki} など）正規化**を追加。CV 評価時も `normalize_translation()` を preds/labels に適用。ついでに `traitner` タイポを `trainer` に修正。 |
 | 2026-03-04 | 0 | 0 | `notebooks/002/[3]dpc-starter-train-cv5-v5-colab.ipynb` の **前処理/後処理（評価時）** を棚卸し。文分割アライン（英: 句読点、akk: 改行）、transliteration の NFKC + 下付き数字→通常数字 + `<gap>` 正規化（`…` / `x` 系）までで、推論/提出用の後処理はほぼ無し（decode→strip 程度）。 |
 | 2026-03-03 | 0 | 0 | `notebooks/002/[3]dpc-starter-train-cv5-v4-colab.ipynb` をコピーして `notebooks/002/[3]dpc-starter-train-cv5-v5-colab.ipynb` を作成。`notebooks/004/dpc-baseline-train-infer.ipynb` の実装に合わせ、**train を `akk→en` + `en→akk` の prefix multi-task で2倍化**（val は `akk→en` のみで評価）。Fold 内で `Dataset.from_pandas` して `input_text/target_text` を作る方式に変更。 |
@@ -15,6 +16,30 @@
 | 2026-02-26 | 2 | 0 | Kaggle MCP が未認証/authorize エラーのため、Kaggleページのアーカイブから要約 |
 | 2026-02-26 | 0 | 0 | Kaggle MCP で `search_notebooks` を試したが `Unauthenticated`（=公開ノートの一覧取得ができず）。アダプタ側の `Authorization: Bearer:` バグで失敗している可能性が高い（`public_insights.md` 参照） |
 | 2026-02-26 | 20 | 0 | Kaggle MCP で `search_notebooks` / `get_notebook_info` が成功。upvote（主）+新しさ（従）で重要ノートをランキングして追記（後述）。 |
+
+## メモ: `notebooks/002/[3]dpc-starter-train-cv5-v5-colab.ipynb` の前処理/後処理
+
+### 前処理（データ）
+
+- Train の augmentation は **「英訳の文分割」×「akk の改行分割」**の簡易アラインのみ。英訳を `(?<=[.!?])\\s+` で文分割し、akk を改行で分割して **文数が一致したときだけ** 1:1 のペアに展開（不一致なら元の doc ペアのまま）。展開時は `len(s)>3 and len(t)>3` の最低限フィルタ。
+- CV は `GroupKFold` を `oare_id` grouping として使い、doc 単位リークを避ける（=分割の “後処理” ではなく split 設計）。
+
+### 前処理（テキスト正規化/入力整形）
+
+- transliteration のみ `normalize_transliteration()` で正規化:
+  - Unicode 正規化 `NFKC`
+  - 下付き数字 `₀..₉` → 通常数字 `0..9`
+  - 欠損/ギャップ表現の統一: `…` と単独の `x` / `X` 連続（正規表現 `\\b[xX]{1,}\\b`）を ` <gap> ` に寄せる
+  - 連続空白を潰して strip
+- 入力は自然言語 prefix を付与:
+  - `akk→en`: `"translate Akkadian to English: " + normalized_transliteration`
+  - `en→akk`: `"translate English to Akkadian: " + translation`
+- train は **双方向（`akk→en` + `en→akk`）**で 2 倍化して shuffle（val は `akk→en` のみ）。
+
+### 後処理（評価時）
+
+- `compute_metrics()` 内で、生成 `preds` の異常値対策（logits→argmax、負値→pad、`[0, vocab_size-1]` に clip）→ decode（`skip_special_tokens=True`）→ `.strip()`。
+- それ以外の提出用/推論用の整形（記号正規化や `<gap>` 変換、句読点処理など）は入っていない（このノートは train+CV のみ）。
 
 ## ノート一覧
 
