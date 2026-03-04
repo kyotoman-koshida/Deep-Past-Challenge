@@ -190,6 +190,22 @@ Kaggle公開ノートのソース確認（Kaggle MCP）で、`published_texts.cs
 - n-best を保存して、**chrF++ 寄りの rerank**（文字一致が効きやすい）を試す価値がある。
 - 公開ノートの実装例では、候補を「beam + sampling」でプールし、**候補同士の sentence-level BLEU（`sacrebleu`）で MBR rerank**する構成がある（例: `mattiaangeli/deep-pasta-mbr`）。モデルを固定したまま取り込める改善として、ローカル提出ノート `notebooks/003/deep-09-mbr-v1.ipynb` に decoding-only で反映（`sacrebleu` が無い場合は文字n-gram F1 にフォールバック）。
 
+#### n-best / MBR rerank（Minimum Bayes Risk）の要点
+
+このコンペ文脈で言われる **n-best/MBR rerank** は、ざっくり「候補を複数出して、候補集合の“合意に近い”1本を選ぶ」推論テクニック。
+
+- **n-best**: `generate()` で最終1本だけでなく **上位 n 個の候補（n-best list）**を返すこと。
+  - Hugging Face の例（概念）: `num_beams=B`, `num_return_sequences=n`（通常 `n<=B`）。
+- **MBR rerank**: 候補 `y1..yn` を用意し、各 `yi` が他候補とどれだけ似ているか（chrF++ / BLEU 等）を平均して、**平均類似度が最大の候補**を採用する（=候補集合の“代表”を選ぶ）。
+  - 直感: 「他の候補たちと最も一致する文は、モデル分布の中心に近い」→ 外れ候補を避けやすい。
+
+注意点:
+- 追加コストは概ね **候補生成コスト（n倍近い） + rerank の O(n^2)**（n が大きいと重い）。
+- `num_beams` と強く相互作用するので、まずは `max_new_tokens` を固定し、`num_beams`/`n`/`length_penalty` を小さめから調整すると安全。
+
+参考（一次メモ）:
+- `.codex/docs/discussion_comments.md` に MBR decoding の言及（例: 「候補を多数生成して chrF++ で合意選択」）を採録済み。
+
 ### Priority 6: スロット置換（名詞入れ替え）によるデータ増量（慎重に）
 
 - 2026-03-03 メモ: **安全なスロット（固有名詞・地名・人名・数詞など）に限定し、かつアラインメント高信頼のものだけ**置換して増量するなら試す価値あり。一般名詞の広い入れ替えは（アッカド語側の形態/表記揺れ・英語側の文法/照応崩れで）ラベルノイズ化しやすいので避ける。
