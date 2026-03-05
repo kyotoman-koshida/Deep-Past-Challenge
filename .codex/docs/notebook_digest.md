@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-05 | 0 | 0 | `notebooks/002/[3-6]dpc_starter_train_cv5_v1_colab.ipynb` をコピーして `notebooks/002/[3_6]dpc_starter_train_cv5_v2_colab.ipynb` を作成。差分は **`generation_num_beams: 3 → 4` のみ**（`Seq2SeqTrainingArguments`）。CV/推論の探索幅（品質↔計算量/時間）を1点だけ動かす ablation 用。 |
 | 2026-03-05 | 0 | 0 | `notebooks/002/[3]dpc_starter_train_cv5_v6_colab.ipynb` から枝分かれして `notebooks/002/[3-6]dpc_starter_train_cv5_v1_colab.ipynb` を作成。差分は **`generation_num_beams: 2 → 3` のみ**（`Seq2SeqTrainingArguments`）。CV/推論の探索幅（品質↔計算量/時間）を1点だけ動かす ablation 用。 |
 | 2026-03-04 | 0 | 0 | `notebooks/005/lb-28-1-dpc-byt5-large-inference.ipynb` を確認。ByT5-large 推論の**最小構成**で、`model.eval()` / `torch.no_grad()` 以外の省メモリ工夫（FP16/8bit 量子化、`device_map` 分割、dynamic padding、`use_cache` 制御など）は未導入。OOM 時は `BATCH_SIZE` / `num_beams` / 生成長（`max_new_tokens` 等）を下げる、FP16 を検討。 |
 | 2026-03-04 | 0 | 0 | 公開ノートの generation 設定（ByT5）観測: `num_beams=2`（`pheezzyy/byt5-genreprocess-2beams-512`）、`num_beams=4`（`llkh0a/dpc-baseline-train-infer` 推論部）、`num_beams=5`（`kiza123123/trinity-akkadian-sota-v2-0-beam-search-upgrade`）、`num_beams=8`（`prayagp1/adaptive-beams-test-v1`。短文は4/長文は8に切替）。 |
@@ -72,6 +73,17 @@
 
 - `compute_metrics()` 内で、生成 `preds` の異常値対策（logits→argmax、負値→pad、`[0, vocab_size-1]` に clip）→ decode（`skip_special_tokens=True`）→ `.strip()`。
 - それ以外の提出用/推論用の整形（記号正規化や `<gap>` 変換、句読点処理など）は入っていない（このノートは train+CV のみ）。
+
+## ローカル派生ノート（ablation）
+
+### `[3_6]dpc_starter_train_cv5_v2_colab.ipynb`（`notebooks/002/[3_6]dpc_starter_train_cv5_v2_colab.ipynb`）
+
+- 目的: `generation_num_beams` を 1点だけ動かして、**CV の `geo_mean`（BLEU×chrF の幾何平均）**と計算量のトレードオフを見る（評価時に `predict_with_generate=True` を使うため、beam は CV に直撃する）。
+- 差分: `notebooks/002/[3-6]dpc_starter_train_cv5_v1_colab.ipynb` → `generation_num_beams: 3 → 4`（他は据え置き）。
+- 学習骨格: ByT5（`google/byt5-small`）+ sentence align（英: 句読点、akk: 改行。文数一致時のみ分割）+ `oare_id` GroupKFold（5-fold）+ train を双方向（`akk→en` + `en→akk`）に 2x 化（val は `akk→en` のみ）。
+- 正規化: Discussion Entry `678899` に基づく翻訳/転写の軽い正規化（`<gap>`、決定詞 `(d)->{d}`、`PN→<gap>`、小数→Unicode分数、month ローマ数字→整数、`fem./sing./pl./plural/(?)` 除去など。フラグでON/OFF）。
+- 主要ハイパラ（抜粋）: `MAX_LENGTH=512`、`epochs=10`、`lr=2e-4`、`weight_decay=0.01`、`per_device_{train,eval}_batch_size=16`、`grad_accum=2`、`bf16=True`（A100想定）、`tf32=True`、`generation_max_length=512`、`generation_num_beams=4`。
+- 再現メモ: Colab 上で `transformers==4.57.1` を明示インストール。出力先は Colab の notebook path を拾って timestamp 付き `OUTPUT_DIR` を作り、`{OUTPUT_DIR}/cv5/fold_k/model` と `cv_results.csv` を保存。
 
 ## ノート一覧
 
