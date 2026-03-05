@@ -2223,6 +2223,31 @@ None of this is meant as criticism of existing approaches; these are difficult p
 I will continue to share supplemental resources (including the onomasticon) as they are finalized, and I’m happy to discuss normalization or alignment strategies further if helpful to others.
 
 ### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/665209#3417055
+- 投稿者: @souhardyatalukdar
+- 投稿日時: 2026-03-04
+- upvote: 2
+- 本文: @deeppast , while going through your onomasticon and the train labels, i noticed that there are some differences in the naming convention.
+
+Example 1 — Different name entirely:
+
+Akkadian token: šu-{d}EN.LÍL , Onomasticon canonical form: Šu-Enlil , Actual training label: Šu-Illil
+
+Example 2 — Geminate consonant:
+
+Akkadian token: šu-ku-tum , Onomasticon canonical form: Šukatum , Actual training label: Šukkutum
+
+(The onomasticon drops the geminate kk that the training labels preserve.)
+
+Example 3 — Long vowel:
+
+Akkadian token: ṣí-lu-lu , Onomasticon canonical form: Ṣilulu , Actual training label: Ṣilūlu
+
+(The onomasticon omits the macron on the ū that the training labels include.)
+
+these are some examples pointed out by claude. which convention do the test labels follow — the onomasticon's or the training data's?
+
+### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/665209#3402145
 - 投稿者: @tatamikenn 
 - 投稿日時: 2026-01-31
