@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-07 | 0 | 0 | `notebooks/002/[2]dpc-starter-train-v1.ipynb` の `simple_sentence_aligner()` が **現行の `train.csv` ではほぼ機能しない**点を確認（transliteration が改行区切りではないため、想定している “英:句点分割 vs akk:改行分割” の文数一致が起きず、実質的に分割・増量されない）。alignment を改善するか、前提を置かずに効果検証する。 |
 | 2026-03-06 | 1 | 1 | `notebooks/007/akkadian-english-inference-byt5-optimized-34x.ipynb`（assiaben の推論ノート）を追記。ノートコメント欄の “public LB overfit（多数サブミットでのベスト選抜）” 示唆をメモ。 |
 | 2026-03-06 | 0 | 0 | `notebooks/002/[3-5]dpc-starter-train-cv5-v1-colab.ipynb` をコピーして `notebooks/002/[3-5]dpc-starter-train-cv5-v2-colab.ipynb` を作成。差分は **観点Eの追加のみ**で、`en→akk` 側の English input にも `normalize_translation_d1()` を適用。D1 単独版（v1）との差分を `reverse input に D1 を入れるかどうか` だけに固定した ablation 用。 |
 | 2026-03-06 | 0 | 0 | `notebooks/002/[3]dpc-starter-train-cv5-v5-colab.ipynb` から枝分かれして `notebooks/002/[3-5]dpc-starter-train-cv5-v1-colab.ipynb` を作成。差分は **観点D1のみ**（英訳 target / CV metric で `fem.` / `sing.` / `pl.` / `plural` / `(?)` を除去）で、`en→akk` 側の English input は未変更（= 観点Eは混ぜない）。あわせて実行不能だった `traitner` タイポを `trainer` に修正。 |
