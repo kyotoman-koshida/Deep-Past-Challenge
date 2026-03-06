@@ -33,6 +33,8 @@
 - `.codex/docs/experiments_log.md`  
   Kaggleの精度改善に直結する実験台帳（いつ、何を、どう変えて、どうなったか）。**次の一手**を必ず残す。  
   ※ MCP/認証/環境などの運用ログはここに書かない（`.codex/docs/ops_log.md` に記録する）。
+- `.codex/docs/submission.md`  
+  Kaggleへサブミットした結果の履歴（提出日時、提出物、スコア、メモ、対応する実験/Notebook など）。
 - `.codex/docs/ops_log.md`  
   MCP・認証・データ取得・実行環境など「運用/インフラ」系の記録（再現に必要な手順や詰まりどころのメモ）。
 - `.codex/docs/public_insights.md`  

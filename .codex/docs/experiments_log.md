@@ -6,10 +6,6 @@
 
 | 実験ID | ノートブック名 | ノートブックのバージョン | LBのスコア | CVのスコア | 公開ノートブックか否か | 備考 |
 |---|---|---|---|---|---|
-| 003 | deep-09 | 2 | 33.0  | N/A | Yes | |
-| 003-1 | [1]deep-09-mbr-v1 | 2 | 33.2 | N/A | No | 003を元に改修。MBR (Minimum Bayes Risk) rerank
-beam と sampling で複数候補を生成 → 候補同士の類似度で 最終1本を選ぶ（mattiaangeli/deep-pasta-mbr 系の発想を decoding-only で移植）
-sacrebleu が使えれば sentence BLEU、無ければ 文字n-gram F1 でスコア計算にフォールバック |
 | 002-1 | [1]dpc-starter-train-cv5 | 5 | N/A | 0.0052 | No | サブミットに利用するモデルの学習 ,ByT5-smallのCV計算, max_new_tokens 未指定, gradient_accumulation_steps=2, (train/test)batch_size=4, train を `akk→en` + `en→akk` の prefix multi-task で2倍化, epochs=20 |
 | 002-2 | [2]dpc-starter-train-v1 | 1 | N/A | N/A | No |  ,ByT5-base, max_new_tokens=512, gradient_accumulation_steps=8, (train/test)batch_size=1, epochs=20 |
 | 002-3-4 | [3]dpc-starter-train-cv5-v4-colab | 1 | N/A | mean=16.7967, std=0.7955 | No | ByT5-smallのCV計算, max_new_tokens=512, gradient_accumulation_steps=2, (train/test)batch_size=16, epochs=10 |
@@ -20,5 +16,3 @@ sacrebleu が使えれば sentence BLEU、無ければ 文字n-gram F1 でスコ
 | 002-3-6-2 | [3-6]dpc_starter_train_cv5_v2_colab | 1 | N/A | mean=18.2521, std=0.5509 | No | ByT5-smallのCV計算, max_new_tokens=512, gradient_accumulation_steps=2, (train/test)batch_size=16, train を `akk→en` + `en→akk` の prefix multi-task で2倍化, normalize_transliteration(), normalize_translation(), compute_metrics() 内で decoded の preds/labels 両方に normalize_translation() を適用, generation_num_beams=4, epochs=10 |
 | 002-3-6-3 | [3-6]dpc-starter-train-cv5-v3-colab | 1 | N/A | mean=18.2609, std=0.5988 | No | ByT5-smallのCV計算, max_new_tokens=512, gradient_accumulation_steps=2, (train/test)batch_size=16, train を `akk→en` + `en→akk` の prefix multi-task で2倍化, normalize_transliteration(), normalize_translation(), compute_metrics() 内で decoded の preds/labels 両方に normalize_translation() を適用, バッチ内の最長100未満ならgeneration_num_beams=4で最長100以上でgeneration_num_beams=8, epochs=10 |
 | 002-3-6-4 | [3-6]dpc-starter-train-cv5-v4-colab | 1 | N/A | mean=18.1896, std=0.6562 | No | ByT5-smallのCV計算, max_new_tokens=512, gradient_accumulation_steps=2, (train/test)batch_size=16, train を `akk→en` + `en→akk` の prefix multi-task で2倍化, normalize_transliteration(), normalize_translation(), compute_metrics() 内で decoded の preds/labels 両方に normalize_translation() を適用, バッチ内でソートした上で最長100未満ならgeneration_num_beams=4で最長100以上でgeneration_num_beams=8, epochs=10 |
-| 002-4-1 | [4]submit-notebook-v1 | 2 | 28.9 | N/A | No | [2]dpc-starter-train-v1で学習したByT5-baseで推論(ただしbeams=4) |
-| 002-4-2 | [4]submit-notebook-v2 | 1 | 28.2 | N/A | No | [2]dpc-starter-train-v2で学習したByT5-baseで推論(ただしbeams=4) |
