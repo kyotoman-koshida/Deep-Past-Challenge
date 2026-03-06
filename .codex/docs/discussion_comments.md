@@ -34,6 +34,58 @@ def canonical(text):
 ---
 
 ## Entry: `679497`
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/680041
+- タイトル: 0.78% Train Transliterations Found in eBL_Dictionary?
+- 投稿者: @ottpocket
+- 投稿日時: 2026-03-05
+- upvote: 1
+- 本文: I imagine I am doing something obviously wrong here, but I just don't know what:
+
+Of 11,583 unique transliterations in the train, only 9 are in eBL_Dictionary.csv.
+
+#transliterations in Train (with frequency counts)
+word_counts = pd.read_csv('/kaggle/input/competitions/deep-past-initiative-machine-translation/train.csv')\
+    ['transliteration'].str.split(expand=True).stack().reset_index()[0].value_counts()\
+    .reset_index().rename(columns={0:'transliteration'}) 
+
+#cleaned words from eBL_Dictionary
+dct = pd.read_csv('/kaggle/input/competitions/deep-past-initiative-machine-translation/eBL_Dictionary.csv')
+dct['word2'] = dct['word'].str.replace(r'\s+I$', '', regex=True) #remove the ' |' at the end of the word
+
+#matching
+word_counts['in_dictionary'] = word_counts['transliteration'].isin(dct['word2'].values)
+print(word_counts.in_dictionary.mean())
+>> 0.000777
+Below are the words that appear in dictionary from train, along with their frequency counts:
+
+transliteration    count   
+    ša  3441    
+    i   453 
+    la  56  
+    šu  34  
+    iš  10  
+    wa  4   
+    u   2   
+    ul  2   
+    mu  2   
+
+### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/680041#3417658
+- 投稿者: @tennogh
+- 投稿日時: 2026-03-06
+- upvote: 2
+- 本文: I think they just use different transliteration systems, and also the words can take different forms depending on the grammatical context. I can usually find the words when I'm looking for translations.
+
+### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/680041#3417501
+- 投稿者: @fx6300
+- 投稿日時: 2026-03-05
+- upvote: 0
+- 本文: Hi, I think we should narrow the data down to records that include OA, since vocabulary from different periods is getting mixed in. Also, regardless of whether a lemmatizer is actually effective for this competition, I don’t think the terms will match the dictionary unless we lemmatize them.
+
+---
+
+## Entry: `679497`
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/679497
 - タイトル: Lora on ByT5 large
 - 投稿者: @pshikk
@@ -912,6 +964,13 @@ What does PN = <gap> mean? Was the literal string “PN” replaced with <gap>, 
 Edit - I noticed the apostrophe was removed, but I think it’s important for translation quality. ref- The current train.csv has "Šāt-Annas representative", but the previous version had "Šāt-Anna's representative".
 
 ### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/674136#3417480
+- 投稿者: @kkashyap14
+- 投稿日時: 2026-03-06
+- upvote: 1
+- 本文: Dear Ryan Holbrook, can we have BLEU and ChrF scores along with GM? This will greatly help us to see our model's performance in a transparent manner and thereby help us to diagnose our models well. You can keep GM as the final LB scoring mechanism. Thank you.
+
+### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/674136#3408858
 - 投稿者: @mpware
 - 投稿日時: 2026-02-21
@@ -992,6 +1051,13 @@ Update: All should be fixed on the next data update next week. Wait and see …
 - 投稿日時: 2026-02-21
 - upvote: 3
 - 本文: My advice would be to leave the normalization replacements for current cases. It won't hurt and there is no single guideline on what the fractions, signs, gaps, months, broken sections etc. should look like. There are many but I've lost count and I'm sorry too say, but a silent update of the existing "stumbling blocks" thread without a clear "EDIT/UPDATE" section makes everything all the more confusing.
+
+### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/674136#3417712
+- 投稿者: @dingolingo
+- 投稿日時: 2026-03-06
+- upvote: 0
+- 本文: What will be ease guid for this
 
 ### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/674136#3410865
@@ -2246,6 +2312,21 @@ Akkadian token: ṣí-lu-lu , Onomasticon canonical form: Ṣilulu , Actual trai
 (The onomasticon omits the macron on the ū that the training labels include.)
 
 these are some examples pointed out by claude. which convention do the test labels follow — the onomasticon's or the training data's?
+
+### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/665209#3417798
+- 投稿者: @angantyr
+- 投稿日時: 2026-03-06
+- upvote: 1
+- 本文: @deeppast Clarification needed.
+
+I'm going through the glossaries and find that in Summerian the nasal "ŋ" is used somewhat often. This appears, e.g., in the determinative for wood {ŋeš}, which for this competition is written as {geš}. Can we safely assume ŋ -> g substitution as valid?
+
+Another question is about treating Summerian words from the ORACC glossary, e.g., {na₄}za-gin₃-ŋu₁₀. Intuitively I would change that into: NA₄.ZA.GÌN-gu₁₀, i.e.:
+
+treat the base as a summerogram -> uppercase, no {}, .-joined
+treat the rest as a --joined suffix
+What would be the approach to best match the data in train.csv and other sources?
 
 ### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/665209#3402145
