@@ -1,6 +1,6 @@
 # EDA notebooks
 
-最終更新: 2026-03-07
+最終更新: 2026-03-11
 
 ## `notebooks/EDA/英訳冒頭脱落点検.ipynb`
 
@@ -25,3 +25,17 @@
 - `notebooks/EDA/データの解析.ipynb` とは別用途の、**翻訳脱落検査専用**ノートブックとして追加。
 - ルールを増やすときは、まず「転写側の定型句」「英訳側の最低限の期待表現」「誤検出リスク」を 1 行で説明できる形で追加する。
 - 実験ログではなく、**データ点検の補助ノート**として扱う。
+
+## `notebooks/EDA/publications候補ページ検索.ipynb`
+
+- 目的: `publications.csv`（PDF名×ページ単位OCRテキスト）を全文検索し、各 `oare_id` に対して **候補 `pdf_name/page` を上位K件**提示する（探索支援）。
+- 対象データ:
+  - `data/kaggle/deep-past-initiative-machine-translation/train.csv`
+  - `data/kaggle/deep-past-initiative-machine-translation/published_texts.csv`（`label`, `cdli_id` などをクエリに利用）
+  - `data/kaggle/deep-past-initiative-machine-translation/publications.csv`
+- 実装方針:
+  - `scripts/publications_candidate_search.py` で SQLite FTS5 インデックスを作成し（`data/index/publications_fts.sqlite`）、`oare_id` ごとに OR クエリで検索して上位候補を返す
+  - notebook 側は `show_candidates(oare_id)` で候補と snippet を表示し、ipywidgets が使える場合は簡易UIで **確定結果を `data/index/confirmed_oare_to_publication.csv` に追記**できる
+- 注意:
+  - ヒットしない/誤ヒットも普通に起きる（OCR品質・表記揺れ・PDF側に当該文字列が無い等）。**最終確定は人手**で行う。
+  - `data/index/` 配下のDB/CSVは再生成可能な作業ファイル扱い（git管理しない前提）。
