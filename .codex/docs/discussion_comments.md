@@ -397,6 +397,25 @@ Something seems to have gone wrong with the LB update. We are investigating.
 - 本文: transliteration:2- translation: 2+ or 2- translation of test is 2- or 2+ or 2(+gap) ??? please let me know.thank you
 
 ### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3418958
+- 投稿者: @yeoyunsianggeremie
+- 投稿日時: 2026-03-10
+- upvote: 3
+- 本文: Sorry if I am being dumb here
+
+The rest is up to you. Here are some recommendations, but there's no guarantee that these will improve your score on the leader board:
+why is it “no guarantee”? IMO these are deterministic postprocessing, so if the test set conforms to this, the score will 100% improve. Does this mean only some texts were changed in this manner while the others are left as it is?
+
+### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3419052
+- 投稿者: @tennogh
+- 投稿日時: 2026-03-10
+- upvote: 3
+- 本文: Sorry if I am being dumb here
+
+Others have pointed that some of those recommendations decrease LB score. I'm guessing either the test set is inconsistent, or it doens't respect those guidelines at all.
+
+### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3416596
 - 投稿者: @llkh0a
 - 投稿日時: 2026-03-03
@@ -407,7 +426,14 @@ If I understand correctly, the translation should be:
 
 I furthermore gave 1 mina of good, native copper for an allu’āru-container of sweet wine from Mamma to Puzur-Amurrum son of Nimar-Ištar. <gap> When he returns from Mamma he will bring it to me. (This was) apart from the 4 allu’āru-containers, the proceeds from the silver and washed copper that they have received (previously). Witnessed by Šu-Bēlum son of Kuzizia.
 
+### Comments
+- URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3419308
+- 投稿者: @tennogh
+- 投稿日時: 2026-03-10
+- upvote: 1
+- 本文: Sorry if I am being dumb here
 
+I think in this case there is no gap in the translation, it just appears that way because of the alignment.
 
 ### Comments
 - URL: https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/678899#3416050
