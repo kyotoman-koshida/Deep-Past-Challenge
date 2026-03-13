@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-13 | 0 | 0 | `notebooks/002/[2-1]dpc-starter-train-v1.ipynb` をコピーして `notebooks/002/[2-1]dpc-starter-train-v2.ipynb` を作成。差分は **モデルを ByT5-large（`google/byt5-large`）に切替**し、`fp16/bf16` + gradient checkpointing + Adafactor をデフォルト有効化（VRAM対策）。Kaggleで Internet OFF の場合は `/kaggle/input/...` にローカル重みを置いて `MODEL_NAME_OR_PATH` を差し替える運用を想定。 |
 | 2026-03-07 | 0 | 0 | ByT5-base 改善の当面の方針メモ（`notebooks/002/[2]dpc-starter-train-v1.ipynb` 起点）: (1) `google/byt5-base` 直startより、公開で強い既学習重み（例: `byt5-akkadian-model` / `byt5-base-big-data2`）から resume/fine-tune する、(2) `en→akk`（aux）を「英語入力も正規化する」か「2段階学習で最後は `akk→en` のみに寄せる」等で効きを担保する、(3) 数値/分数・`PN/<gap>` 等の表記規約を train/infer で揃える、(4) 現行 `simple_sentence_aligner()` は現行 `train.csv` の形式だと増量になりにくいので改善 or 効果検証を前提化、(5) `fp16/bf16` や実効batchを上げて学習を安定化、(6) `published_texts.csv` を teacher（例: `final-byt5`）で擬似翻訳→蒸留してデータ量を稼ぐ案を検討。 |
 | 2026-03-07 | 0 | 0 | `notebooks/002/[2]dpc-starter-train-v1.ipynb` の `simple_sentence_aligner()` が **現行の `train.csv` ではほぼ機能しない**点を確認（transliteration が改行区切りではないため、想定している “英:句点分割 vs akk:改行分割” の文数一致が起きず、実質的に分割・増量されない）。alignment を改善するか、前提を置かずに効果検証する。 |
 | 2026-03-06 | 1 | 1 | `notebooks/007/akkadian-english-inference-byt5-optimized-34x.ipynb`（assiaben の推論ノート）を追記。ノートコメント欄の “public LB overfit（多数サブミットでのベスト選抜）” 示唆をメモ。 |
