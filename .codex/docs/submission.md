@@ -12,3 +12,6 @@ sacrebleu が使えれば sentence BLEU、無ければ 文字n-gram F1 でスコ
 | 4-1-1 | [4-1]submit-notebook-v1 | 1 | 31.6 | N/A | No | final-byt5で推論(ただしbeams=4) |
 | 4-2 | [4]submit-notebook-v2 | 1 | 28.2 | N/A | No | [2]dpc-starter-train-v2で学習したByT5-baseで推論(ただしbeams=4) |
 | 4-3 | [4]submit-notebook-v3 | 1 | 28.3 | N/A | No | [2-1]dpc-starter-train-v1で学習したByT5-baseで推論(ただしbeams=4) |
+| 4-1-2 | [4-1]submit-notebook-v3 | 2 | 29.6 | N/A | No | [2]dpc-starter-train-v3で学習したByT5-baseで推論(ただしbeams=4)。 |
+| 4-1-3 | [4-1]submit-notebook-v3 | 5 | 29.6 | N/A | No | [2]dpc-starter-train-v3で学習したByT5-baseで推論(ただしbeams=4)。前処理と後処理も学習ノートブックに合わせた。 |
+| 4-1-4 | [4-1]submit-notebook-v3 | 5 | 28.6 | N/A | No | [2]dpc-starter-train-v4で学習したByT5-baseで推論(ただしbeams=4)。前処理と後処理も学習ノートブックに合わせた。 |
