@@ -1,6 +1,9 @@
 # Deep Past Challenge（Translate Akkadian to English）公開ノート/コメントからの学び（暫定）
 
-最終更新: 2026-03-13
+最終更新: 2026-03-15
+
+追記（2026-03-15）:
+- Kaggle MCP 経由でコンペ Discussions のスレ/コメントも取得できる状態を確認し、後処理（置換）まわりの “スコアが上がる/下がる” 報告を本メモにも反映した。
 
 > 注意: 本来は Kaggle MCP で公開ノートブック/ディスカッション/コメントを収集したいが、この環境では Kaggle MCP が `Unauthenticated` になり、`authorize` もエラーで進められない。  
 > そのため本メモは、Kaggleページのアーカイブ（archive.ph 等）と外部の公開記事を一次ソースとして、現時点で再現性のある範囲だけを整理している。
@@ -112,6 +115,15 @@
 - **ビーム探索 + 長さ正規化**（短文/欠損表現が混ざると極端に短い出力に寄りがち）。
 - **軽い後処理**（空白/句読点/記号の正規化、`<gap>` 的な表現を導入した場合の整形）。
 - **複数 seed / 複数 fold のアンサンブル**（LB 安定化と底上げ）。
+- **“英訳の置き換え/言い換え” は LB を下げやすい**（読みやすさ↑でも surface match↓）  
+  - Discussions「Post-processing by LLM」では、LLM で英訳を自然な英語にリライトすると **LB が改善せず、むしろ悪化することが多い**という共有がある（例: 単複や言い回しの “正しさ” が BLEU/chrF++ の一致を崩す）。  
+  - 参考: `https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/664079`
+- **数値表記の置換（小数→Unicode分数）は、少なくとも public LB では “ほぼ変わらない/小さい” 報告がある**  
+  - 「Unicode Fractions vs Decimals」では、小数→分数の後処理で **LB が変わらない（または僅差で見えにくい）**というやり取りがある（LB 表示の丸め/同点ソートの話も含む）。  
+  - 参考: `https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/665101`
+- **固有名詞レキシコン（`OA_Lexicon_eBL.csv`）での “正規化置換” は注意**  
+  - lexicon の `norm` が train の英訳表記と一致しない例が多く、host 側も「表記揺れ（transliteration/normalization の両方）がある」と明言しているため、機械的に置換すると **スコアが下がる方向に働く**可能性がある（“正す”＝“一致する”ではない）。  
+  - 参考: `https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/664905`
 
 ---
 

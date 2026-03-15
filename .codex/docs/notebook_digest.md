@@ -128,5 +128,8 @@
   - `"/kaggle/input/dpc-byt5-large/"`（`byt5-large` 系の例）
   - `"/kaggle/input/models/mattiaangeli/byt5-akkadian-mbr-v2/pytorch/default/1"`（MBR 用の ByT5 派生）
 - 「LLM 後処理（polish）」は補助的に使われることがある。例: `hanifnoerrofiq/dpc-byt5-base-flan-t5-base` は **ByT5 翻訳 → Flan-T5(base) で英語整形**の2段。
+- Discussions では「英訳を LLM で自然な英語にリライトする」後処理は **LB を改善せず悪化しがち**という共有がある（読みやすさ↑でも surface match↓）。参考: `https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/664079`
+- 「小数→Unicode分数」など数値表記の置換は、少なくとも public LB 上は **変化が小さい/見えにくい**というやり取りがある（LB 表示の丸め/同点ソートの話を含む）。参考: `https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/665101`
+- `OA_Lexicon_eBL.csv` を使った固有名詞の置換/検証は、lexicon `norm` と ground truth の表記が一致しない例が多く、機械的な置換は危険。参考: `https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/discussion/664905`
 - 「LLM を主モデルにする」系の試みもあるが、主流とは別系統（計算資源/実装コストが増える）。例: `rejk11/deep-past-qwen-4b-lora`（Qwen 4B + LoRA）、`xiaoleilian/deep-past-sft-gemma3-training`（Gemma3 4B IT + SFT/LoRA）。
 - ByT5 以外の seq2seq も一部で検証される。例: `rifat963/offline-competition-deep-past-challenge-mbart50`（mBART50 + LoRA、オフライン実行前提）。
