@@ -28,6 +28,13 @@
 | 4 | train.curated.v003.xlsx | train.curated.v002.xlsxを元にして、イタリックの抜け落ち部分に関してはあえて全てオリジナルの状態に戻した | - |
 
 ## モデルの学習
+### ByT5-small
+| 学習ID | ノートブック名 | ノートブックのバージョン | loss | エポック数 | 学習バッチサイズ | GradientAccumulationSteps | 備考 |
+|---|---|---|---|---|---|---|---|
+| 2-3-1 | [2-3]dpc-starter-train-v1 | 3 | 0.3392 | 20 | 4 | 2 | LB:27.5([4-3]submit-notebook-v1 ver3) |
+| 2-3-1 | [2-3]dpc-starter-train-v2 | 2 | 0.3341 | 20 | 4 | 2 | LB:29.1([4-3]submit-notebook-v2 ver1) |
+
+
 ### ByT5-base
 | 学習ID | ノートブック名 | ノートブックのバージョン | loss | エポック数 | 学習バッチサイズ | GradientAccumulationSteps | 備考 |
 |---|---|---|---|---|---|---|---|
