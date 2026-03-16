@@ -1,6 +1,6 @@
 # 置換・正規化ルール整理（transliteration / translation）
 
-最終更新: 2026-03-15
+最終更新: 2026-03-16
 
 このリポジトリ内で散在している「置換・正規化（pre/post）」観点を、**入力（transliteration）**と**出力（translation）**に分けて一覧化する。
 
@@ -139,6 +139,11 @@
 - `5/12 shekels` → `⅔ shekel 15 grains`
 - `7/12 shekels` → `½ shekel 15 grains`
 - `1/12 (shekel)` / `1/12 shekel` → `15 grains`
+- 派生（自前拡張）: `notebooks/002/[2-3-4]dpc-starter-train-v3.ipynb`
+  - `N 11/12 shekels` / `N 11/12 (shekel)` → `N+1 shekels less 15 grains`
+  - `N 1/12 shekels` / `N 1/12 (shekel)` → `N shekels 15 grains`
+  - `k/12 shekel(s)` / `k/12 (shekel)`（例: `3/12`）→ `45 grains` 等（`k=1..11` の一部を定型表現へ寄せる）
+  - `N k/12 ...`（例: `5 7/12 shekels`）→ `5 shekels ½ shekel 15 grains` のように “整数部 + 定型分数表現” へ寄せる
 
 #### B-3. 数値正規化（出力）
 
