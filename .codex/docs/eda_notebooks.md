@@ -1,6 +1,6 @@
 # EDA notebooks
 
-最終更新: 2026-03-15
+最終更新: 2026-03-19
 
 ## `notebooks/EDA/train.curated.v002_バイト長分布.ipynb`
 
@@ -15,6 +15,20 @@
 - 運用メモ:
   - 2026-03-19 時点で `transliteration(+prefix)` 1024 byte 超は 206/1564 件、`translation` 1024 byte 超は 174/1564 件、いずれか超過は 213/1564 件。
   - ChatGPT プロジェクトでの長文分割ブリーフは `.codex/docs/chatgpt_project_record_split.md` を参照。
+
+## `notebooks/EDA/train.curated.v002-3_バイト長分布.ipynb`
+
+- 目的: `train.curated.v002-3.xlsx` の `transliteration(+prefix)` と `translation` の **UTF-8 バイト長分布**を可視化し、ByT5 の `max_source_length/max_target_length` の候補を決める。
+- 対象データ: `data/curated/deep-past-initiative-machine-translation/train/train.curated.v002-3.xlsx`
+- 出力:
+  - 分位点（p50/p90/p95/p98/p99/max）
+  - ヒストグラム（線形/対数）
+  - ECDF（累積分布）
+  - `max_length` 候補ごとの truncation 率
+  - 最長サンプルのプレビュー（先頭/末尾）
+- 運用メモ:
+  - 元ノートは `notebooks/EDA/train.curated.v002_バイト長分布.ipynb`。
+  - `PROCESS-DATA/train.curated.v002-3_バイト長分布.csv` と `PROCESS-DATA/train.curated.v002-3_バイト長分布縮約.csv` を出力する。
 
 ## `notebooks/EDA/英訳冒頭脱落点検.ipynb`
 
