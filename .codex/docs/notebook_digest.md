@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-19 | 0 | 0 | `notebooks/002/[4-6]submit-notebook-v3.ipynb` をベースに、`notebooks/002/[2-7]dpc-starter-train-v3.ipynb` で学習したモデルを使う submit ノート `notebooks/002/[4-7]submit-notebook-v3.ipynb` を新規作成。前処理/後処理は `[2-7]` に合わせ、提出直前の scoring error 対策（空文字→`<gap>` + `validate_submission`）は `[4-6]` を踏襲。 |
 | 2026-03-13 | 0 | 0 | `notebooks/006/lb-35-9-ensembling-post-processing-baseline.ipynb` の前処理/後処理の置換ルールを確認。転写（入力）側は `OptimizedPreprocessor` で `@deeppast` Entry `678899` の推奨（`<gap>` 統一、決定詞 `(d)->{d}`, `(ki)->{ki}`, `(TÚG)->TÚG`、`KÙ.B.->KÙ.BABBAR`、下付き数字→通常数字、小数→Unicode分数、長いfloat短縮、`ḫ/Ḫ->h/H`）をほぼ網羅。追加で `sz->š`, `s,->ṣ`, `t,->ṭ`, 母音+2/3→アクセント等の ASCII→ダイアクリティクス変換、`ʾ` 除去、ダッシュ統一、下付き `ₓ` 除去も実装。出力（英訳）側は `VectorizedPostprocessor` で `PN-><gap>`、月ローマ数字→整数、/による代替訳の片側除去、禁則文字除去、重複語/句の縮約などを実施。 |
 | 2026-03-18 | 0 | 0 | `notebooks/002/[2-6]dpc-starter-train-v3.ipynb` から枝分かれして `notebooks/002/[2-6-2]dpc-starter-train-v3.ipynb` を作成。Discussion Entry `678899` と @engricardoperez 氏の指摘に合わせ、`-gold/-tax/-textiles` の置換を **「文字列先頭または空白直後のみ」** に限定。`import-tax` や `kutānu-textiles` のような語中ハイフンを誤置換しない ablation 用。 |
 | 2026-03-13 | 0 | 0 | `notebooks/002/[2-1]dpc-starter-train-v2.ipynb` を直接編集。P100のOOM対策として `MAX_LENGTH=256` に短縮し、`gradient checkpointing` を有効化。`loss=0.0` 再発回避のため `fp16/bf16` は無効（FP32維持）。さらに `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` を追加してメモリ断片化を抑制。 |
