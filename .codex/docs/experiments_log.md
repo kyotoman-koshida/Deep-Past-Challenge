@@ -27,6 +27,7 @@
 | 3 | train.curated.v002.xlsx | 6eのPDFの英訳文の抜け落ちの修正、全く異なる転写・英訳文が記入されている場合の修正、一部のイタリック抜けの修正。その他、<gap>抜けや文字起こしミスの修正。 | イタリック抜けの修正に関しては、test.csvも同様な穴抜けがある可能性を考慮すると、修正しない方が良いかもしれない。|
 | 4 | train.curated.v003.xlsx | train.curated.v002.xlsxを元にして、イタリックの抜け落ち部分に関してはあえて全てオリジナルの状態に戻した | - |
 | 5 | train.curated.v004.xlsx | train.curated.v003.xlsxを元にして、"[" や "]" を削除。5レコードの修正。 | - |
+| 6 | train.curated.v002-3.xlsx | train.curated.v002.xlsxを元にして、"[" や "]" を削除。徹底的なOCR修正でイタリックの抜け落ちを修正。LLM修正ミスと思われるものの修正。 | - |
 
 ## モデルの学習
 ### ByT5-small
@@ -38,6 +39,8 @@
 | 2-3-3-1 | [2-3-3]dpc-starter-train-v1 | 1 | 0.3343 | 20 | 4 | 2 | LB:28.7([4-3-3]submit-notebook-v1 ver2) |
 | 2-3-3-2 | [2-3-4]dpc-starter-train-v3 | 1 | 0.3323 | 20 | 4 | 2 | LB:29.0([4-3-4]submit-notebook-v3 ver1) |
 | 2-5-3 | [2-5]dpc-starter-train-v3 | 1 | 0.335 | 20 | 4 | 2 | LB:29.0([4-5]submit-notebook-v3 ver1) |
+| 2-6 | [2-6]dpc-starter-train-v3 | 1 | 0.328 | 20 | 4 | 2 | LB:28.6([4-6]submit-notebook-v3 ver1) |
+| 2-6-2 | [2-6-2]dpc-starter-train-v3 | 1 | 0.3251 | 20 | 4 | 2 | LB:28.3([4-6-2]submit-notebook-v3 ver1) |
 
 
 ### ByT5-base
