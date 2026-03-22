@@ -124,6 +124,16 @@
 - 元: `notebooks/002/[4-3]submit-notebook-v3.ipynb`（`MODEL_DIR` 既定パスの系統差し替え + 前処理/後処理を train-v3（2-3-4）に一致させる）。
 - 入出力: `test.csv`（`/kaggle/input/.../test.csv`）→ `submission.csv`（`/kaggle/working/submission.csv`）。
 
+### `[2]final-submission-v1.ipynb`（`notebooks/006/[2]final-submission-v1.ipynb`）
+
+- 作成日: 2026-03-23
+- 目的: `lb-35-9-com-corre-es.ipynb` をベースに、**1024長モデルを追加した 4-model ensemble + MBR** の提出ノートを作る。
+- 差分:
+  - モデル追加: `model_a`/`model_b` に加え、`ByT5-base`/`ByT5-large`（入力長=1024, 出力長=1024）を追加
+  - 前処理/後処理: `notebooks/002/[2-10]dpc-starter-train-v6-colab.ipynb` と同一ロジックに合わせる
+  - フォールバック: 最終回答が空の場合は `"<gap>"` を出す
+- 入出力: `test.csv`（`/kaggle/input/.../test.csv`）→ `submission.csv`（`/kaggle/working/submission.csv`）。
+
 ## ノート一覧
 
 | タイトル | URL | 作者 | アップ投票 | 日付 | 手法の一言 | 要点・使えそうなアイデア | 自分用メモ |
