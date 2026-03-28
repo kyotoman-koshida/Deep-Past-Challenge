@@ -1,6 +1,15 @@
 # Deep Past Challenge（Translate Akkadian to English）公開ノート/コメントからの学び（暫定）
 
-最終更新: 2026-03-15
+最終更新: 2026-03-28
+
+追記（2026-03-28）:
+- 3位 writeup「Synthetic Data to Teach OA Fundamentals」を確認。中核は **ByT5-Large + ByT5-XL の2本立て**で、各モデルを **CPT（継続事前学習）→ FT（高品質 scholar data で微調整）** の2段で学習し、最終的に **Qwen3-8B の pairwise Reward Model** で文単位に良い方の翻訳を選ぶ構成だった。
+- 改善の主因は「モデル変更」より **データ設計**にある。特に synthetic drills で **OA の語彙・文法・テンプレ式の定型文・人名/一般語の曖昧性**を先に教え、その後 scholar translation だけで訳文スタイルを寄せる役割分担が明確。
+- 追加データ源は広く、`train.csv` + `Sentences_Oare` の再構成、PDF からの Gemini 抽出、`publications.csv` OCR 抽出、`published_texts.csv` への synthetic translation、pseudo labeling まで使っている。上位では **「公開データをどう並列化・整形・品質選別するか」** が勝負になっていることを再確認。
+- 学習上の示唆として、CPT は最後まで回すのでなく **14k step 付近で止めて FT に移る**判断をしている。writeup では、それ以降は rare name が frequent neighbor に引っ張られ、hallucinated names が増えたと述べている。
+- 推論は beam search (`num_beams=8`) を使い、最終提出は reward model 選択。単純平均 ensemble ではなく **文ごとの pick-best** にしている点が重要。
+- CPT の明示条件は、**effective batch size 128 / 3 epochs / 18k gradient steps / warmup 3.6k / constant LR / grad clip 0.3 / AWP**。初期 1k step は勾配がかなり荒く、warmup と clipping で安定化したとしている。
+- FT の明示条件は、**14k CPT checkpoint から開始 / cosine decay + short warmup / name swap augmentation / AWP / EMA / label smoothing**。ただし writeup には **optimizer, exact LR, max length, FT epochs/steps, pseudo label の混合比, reward model の学習手順**は書かれていない。
 
 追記（2026-03-15）:
 - Kaggle MCP 経由でコンペ Discussions のスレ/コメントも取得できる状態を確認し、後処理（置換）まわりの “スコアが上がる/下がる” 報告を本メモにも反映した。
