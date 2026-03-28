@@ -10,6 +10,9 @@
 - 推論は beam search (`num_beams=8`) を使い、最終提出は reward model 選択。単純平均 ensemble ではなく **文ごとの pick-best** にしている点が重要。
 - CPT の明示条件は、**effective batch size 128 / 3 epochs / 18k gradient steps / warmup 3.6k / constant LR / grad clip 0.3 / AWP**。初期 1k step は勾配がかなり荒く、warmup と clipping で安定化したとしている。
 - FT の明示条件は、**14k CPT checkpoint から開始 / cosine decay + short warmup / name swap augmentation / AWP / EMA / label smoothing**。ただし writeup には **optimizer, exact LR, max length, FT epochs/steps, pseudo label の混合比, reward model の学習手順**は書かれていない。
+- synthetic drill は、ByT5 に別タスクを解かせるのでなく、**最終的にすべて `transliteration -> translation` の並列ペアへ落として混ぜる**設計だと読むのが自然。文法 drill も「文法ラベル分類」ではなく、seed 文にルールを適用して OA 文と英訳を同時に最小変更した新規ペアを作る教材化として理解するとよい。
+- 再現時の最小レシピは、`(1) 実例 seed を集める -> (2) 語彙/文法/テンプレごとに変換規則を定義 -> (3) LLM またはコードで OA 側と英訳側を同時変換 -> (4) host 形式に正規化 -> (5) 低品質例をフィルタ`。特に slot-fill と name swap はコード生成向き、grammar drill は LLM 生成後に rule-based 検査を入れるのが安全。
+- 学習データ設計の観点は、少なくとも `1) 形式整合（表記・gap・determinative）`, `2) 内容忠実性（alignment/抽出品質）`, `3) 語彙被覆（lemma・多義語・制度語）`, `4) 文法被覆（時制・人称・態・節構造）`, `5) 定型文被覆（借財・証人・月名・数量表現）`, `6) 固有名詞/地名の曖昧性`, `7) 長さ/文書構造（sentence vs tablet）`, `8) ドメイン/出典の広がり`, `9) ラベル品質に応じた混合比`, `10) test 形式への整合` に分けて考えるのが有効。単に「きれいにする」だけでは 1) と 2) に寄りすぎる。
 
 追記（2026-03-15）:
 - Kaggle MCP 経由でコンペ Discussions のスレ/コメントも取得できる状態を確認し、後処理（置換）まわりの “スコアが上がる/下がる” 報告を本メモにも反映した。
