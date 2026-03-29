@@ -1,6 +1,14 @@
 # Deep Past Challenge（Translate Akkadian to English）公開ノート/コメントからの学び（暫定）
 
-最終更新: 2026-03-28
+最終更新: 2026-03-29
+
+追記（2026-03-29）:
+- 1位 writeup「Data Quality Dictates Everything」を確認。詳細要約は `.codex/docs/1st_place_writeup_data_quality_dictates_everything.md` に分離した。
+- 1位チームは **公式 `train.csv` を完全に捨て、自前抽出データを主軸に再構成**していた。コアは PDF/書籍からの OCR + Gemini 抽出で、`data1 -> data2 -> data3` と **怪しい tablet を再抽出して品質改善を回す**流れ。
+- 改善の主因はモデルではなく **データの作り直し**。`data2` では cross-fold 平均 `geo_metric < 20` の 740 tablet/chapter、`data3` では長さ不整合サンプルを含む 131 tablets を再抽出し、どちらも手確認を入れている。
+- 最終系は **`byt5-xl` 11本 + beam/sampling 混成候補 + weighted MBR**。ただし writeup のトーンは「MBR が本体」ではなく、**高品質並列データがあって初めて大きい ByT5 と MBR が効く**というもの。
+- checkpoint 選択は local `eval_bleu/chrf` より **`eval_loss` 重視**。hidden test と文体分布がズレるため、3 epoch 超で metric が伸びても信頼しないという判断は重要。
+- 前処理/後処理については、**前処理は丁寧に、後処理は最小限に**という立場。Public LB に合わせた置換・補正は overfit / shake-up のリスクが高いとしている。
 
 追記（2026-03-28）:
 - 3位 writeup「Synthetic Data to Teach OA Fundamentals」を確認。中核は **ByT5-Large + ByT5-XL の2本立て**で、各モデルを **CPT（継続事前学習）→ FT（高品質 scholar data で微調整）** の2段で学習し、最終的に **Qwen3-8B の pairwise Reward Model** で文単位に良い方の翻訳を選ぶ構成だった。
