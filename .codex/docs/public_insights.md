@@ -2,6 +2,15 @@
 
 最終更新: 2026-03-29
 
+追記（2026-03-31）:
+- 2位 writeup「Data-Centric Akkadian NMT」を確認し、原文ベースの保管先を `solutions/2nd/2nd_place_solution.md` に追加した。
+- 2位チームの主張は一貫して **モデル改良よりデータ構築**。`google/byt5-large` を据え置いたまま、`Breaker / Fixer / Generator` の3分割で公式データから sentence pair を再構成し、特に `Breaker` と `Fixer` が中核だった。
+- 最大の改善源は **学術 PDF の独自発掘 + OCR/LLM 抽出**。official 以外に約 60 本の OA 論文・モノグラフを追加し、クリーニング後で **60,654 external sentence pairs / 149 sources** を作ったとしている。
+- 非英語論文（TR/DE/FR）は抽出時に英訳して `Akkadian -> English` に統一しつつ、**同一 tablet の EN 版を優先する dedup**、非英語 source の multi-version extraction、EN source の 2x boost で混合比を調整している点が実務的。
+- 前処理は `sz/s, -> š`, `, + consonant -> ṭ`, 母音+`2/3` のアクセント化、上付き数字/hamza/`ḫ`/決定詞表記の統一など、既存の上位解法とも整合する **強めの source-side normalization** を採用。
+- 学習は **max_source_length 768 bytes** 前提で sentence pair だけでなく **768-byte 文書チャンク**も混ぜている。`group_by_length=True` の勾配揺れに対して Adafactor の `β₁=0.9` を効かせたという記述は、長さ bucket 学習時の安定化ヒントとして有用。
+- 反面、**morphological metadata だけからの pseudo translation**, **辞書単語ペアの追加学習**, **PN/GN 後処理** は効かなかったとして明示的に捨てている。
+
 追記（2026-03-29）:
 - 1位 writeup「Data Quality Dictates Everything」を確認。詳細要約は `solutions/1st/1st_place_writeup_data_quality_dictates_everything.md` に分離した。
 - 1位チームは **公式 `train.csv` を完全に捨て、自前抽出データを主軸に再構成**していた。コアは PDF/書籍からの OCR + Gemini 抽出で、`data1 -> data2 -> data3` と **怪しい tablet を再抽出して品質改善を回す**流れ。

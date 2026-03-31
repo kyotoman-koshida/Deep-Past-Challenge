@@ -6,6 +6,7 @@
 
 | 日付 | 追加したノート数 | 追加したコメント数 | メモ |
 |------|------------------|--------------------|------|
+| 2026-03-31 | 0 | 0 | 2位 writeup「[2nd Place] Data-Centric Akkadian NMT」を Kaggle MCP で取得し、原文ベースで `solutions/2nd/2nd_place_solution.md` に保存。要点は **Breaker/Fixer による公式データ再分割**, **学術 PDF 149 source からの 60,654 external sentence pairs**, **強めの source-side normalization**, **768-byte 文書チャンク学習**, **Generator / 辞書ペア / PN-GN 後処理は不採用**。 |
 | 2026-03-29 | 0 | 0 | 1位 writeup「[DPC 1st] Data Quality Dictates Everything」を Kaggle MCP で取得し、要約を `solutions/1st/1st_place_writeup_data_quality_dictates_everything.md` に整理。要点は **公式 `train.csv` を捨てて OCR/LLM データを再構成**, **怪しい tablet を train 内再推論で再抽出**, **最終系は `byt5-xl` 11本 + beam/sampling + weighted MBR**, **post-process より data-process 重視**。 |
 | 2026-03-22 | 0 | 0 | 比較メモ: `notebooks/006/lb-35-9-ensembling-post-processing-baseline.ipynb`（元版）に対し、`notebooks/002/lb-35-9-with-regex-corrections-public-model.ipynb` は「host v3 update + 議論反映の **FIXED版**」として、(1) モデルパスを `final-byt5/byt5-akkadian-optimized-34x` + `byt5-akkadian-mbr-v2` に更新、(2) sampling を **複数 temperature** + optional diverse beam（実装）へ拡張、(3) MBR を **chrF++ 単独→ chrF++/BLEU/Jaccard/長さの重み付き**へ拡張、(4) 後処理の regex/置換を修正（`5/12 shekel`、commodity word boundary、括弧保持、curly quotes の変換、`ḫ/Ḫ→h/H`、slash代替の安全化、stray marks 除去）している。 |
 | 2026-03-22 | 0 | 0 | `notebooks/006/lb-35-9-ensembling-post-processing-baseline.ipynb` と `notebooks/006/lb-35-9-ensembling-post-processing-baseline2.ipynb` は、セル内容・メタデータ含め **バイト単位で完全一致**（sha256 が同一）。`.ipynb` としては実質的に重複ファイル。 |
