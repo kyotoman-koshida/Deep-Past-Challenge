@@ -198,3 +198,67 @@
 - `β₁` は Adafactor に慣性を持たせる項であり、今回のような **length bucket 起因の step 間変動をならす用途**で見る。
 - `group_by_length=True` は throughput 改善だけでなく、**勾配分布の時間的偏り**を生む可能性がある前提で使う。
 - 学習が荒れたときは LR やモデルだけでなく、**batch 構成、token 数、長さ bucket の並び**も原因候補として先に点検する。
+
+---
+
+## Entry: 2026-04-01 5位解法から見えた「synthetic data と推論実務のつなぎ方の甘さ」
+
+### 0. 背景（状況）
+
+- このセッションでは、5位 writeup を `solutions/5th/5th_place_solution.md` に保全し、日本語要約も `solutions/5th/5th_place_solution_ja_summary.md` に作成した。
+- その過程で、`back-translation`, `Qwen3.5-27B を使った理由の推測`, `test-time ensemble と decoding-time ensemble の違い`, `weight averaging`, `CTranslate2` の役割を言語化した。
+- さらに `solutions/5th/5th-solution.ipynb` を確認し、back-translation の実装は含まれず、**context 付き単一モデル推論 + CT2 実行 notebook** であることも確認した。
+
+### 1. 何が起きたか（事実）
+
+- 5位解法は、巨大な最終 ensemble よりも **PDF 抽出データ + EvaCun + synthetic data** を段階的に積み上げる構成だった。
+- synthetic data は「何でも混ぜる」形ではなく、**reverse model（English -> Akkadian）を作って back-translation 用の擬似ペアを生成する**明確な設計になっていた。
+- back-translation では、`Qwen3.5-27B` で translation-like English sentence を生成し、それを reverse model で Akkadian 側へ戻して学習データ化していた。
+- さらに 10k だけでなく 100k まで増やす比較もしており、**public では悪化しても private では改善**するケースを確認していた。
+- 推論では複数モデルを test-time / decoding-time に束ねるのではなく、**fold モデルを weight averaging して 1 本にまとめ、その単一モデルを CTranslate2 で高速実行**していた。
+- notebook を見ると、実際に確認できたのは `context_num_prev=2`, `prepend_context=True`, `ct2_model_path`, `beam` 設定などで、**training や synthetic 生成の実装は notebook 外**にあった。
+
+### 2. 反省（原因・見落とし）
+
+#### 2.1 synthetic data を「追加データの一種」として雑に見ていた
+
+- 自分は synthetic data を、既存ペアに後付けで足す“量増し”に近い発想で見がちだった。
+- しかし 5位解法は、forward / reverse の役割を分け、**reverse model を介した back-translation を独立した学習段階として設計**していた。
+- つまり synthetic は「足すか足さないか」ではなく、**どの向きのモデルで、どの文体の文を、どの段階で作るか**まで含めて設計すべきだった。
+
+#### 2.2 「高品質な生成モデルを使えば良い」と短絡しやすかった
+
+- Qwen3.5-27B を見たとき、自分はまず「GPT-5.4 / Claude / Gemini Pro の方が高品質では」と反応した。
+- ただし 5位解法の文脈では、必要なのは“文学的に最良の英文”ではなく、**大量に・安定して・翻訳文らしい英文を作り、reverse model に流し込めること**だった。
+- 自分は生成元 LLM の性能を単体で見がちで、**最終的なボトルネックが reverse model 側にある可能性**や、10k / 100k スケールでのコスト・反復性を十分に考えていなかった。
+
+#### 2.3 ensemble 周りの用語と実務上の意味を曖昧に扱っていた
+
+- `test-time ensemble`, `decoding-time ensemble`, `weight averaging` を、自分の頭の中でかなり近いものとして雑にまとめていた。
+- しかし実際には、
+  - test-time ensemble: 各モデルを別々に走らせて最後に統合
+  - decoding-time ensemble: token ごとに複数モデルの確率を統合
+  - weight averaging: **推論前に重みを平均して 1 モデル化**
+  と全く違う。
+- 5位解法の強みは、複雑な ensemble を避けて **1 モデル化した上で submit notebook を軽くした**点にあり、その区別を最初から意識できていなかった。
+
+#### 2.4 CTranslate2 を「速くなるツール」以上に理解していなかった
+
+- CTranslate2 についても、当初は「transformers より速い推論ランタイム」くらいの認識だった。
+- だが 5位解法では、weight averaged 済みモデルを **CT2 形式へ変換し、tensor parallel や量子化も視野に入れて submit 実行性を確保する**位置づけになっていた。
+- 自分は推論高速化を“最後の最適化”として見がちで、**モデル統合の方法と推論ランタイム選択が一体**だという見方が弱かった。
+
+#### 2.5 writeup と notebook の役割分担を読み分ける意識が弱かった
+
+- `solutions/5th/5th-solution.ipynb` を開く前は、back-translation 生成や reverse model 学習の痕跡まで notebook に入っているかもしれない、と期待していた。
+- 実際には notebook は **推論用の薄い公開物**で、重要な training / data generation 部分は writeup にしか出ていなかった。
+- 自分は「公開 notebook を見れば全工程が追える」と期待しがちで、**writeup は方針、notebook は提出実装、という分業**を前提に読む姿勢が足りなかった。
+
+### 3. 学び（次に効く原則）
+
+- synthetic data は量ではなく、**生成方向・生成元文体・投入段階**まで含めて設計する。
+- back-translation では、英文生成 LLM の単体品質より、**大量生成の安定性・コスト・reverse model と組み合わせた最終品質**で評価する。
+- ensemble を議論するときは、**予測統合なのか、token 時統合なのか、重み平均なのか** を明示して混同しない。
+- weight averaging は「軽い ensemble 代替」ではなく、**submit 制約下で 1 モデルに圧縮する実務手段**として優先的に考える。
+- CTranslate2 は単なる高速化ライブラリではなく、**量子化・並列化・単一モデル化と組み合わせて提出を成立させる推論基盤**として見る。
+- 公開物を読むときは、**writeup は設計思想、notebook は最終実装** と役割分担している可能性を前提にし、両者を補完して解釈する。
